@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f5f3">
+  <title>CareCircle | A little more in sync</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f3f5f3;
+      --surface: rgba(255, 255, 255, .78);
+      --surface-muted: #edf0ee;
+      --ink: #222624;
+      --muted: #727b76;
+      --line: rgba(28, 36, 31, .1);
+      --green: #5c7866;
+      --green-dark: #40594a;
+      --green-soft: #e7eeea;
+      --lime: #d8edbd;
+      --amber: #bd7a32;
+      --amber-soft: #fbf0df;
+      --red: #b95348;
+      --red-soft: #f8e9e5;
+      --blue: #527486;
+      --blue-soft: #e9f0f2;
+      --heading: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+      --sans: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 var(--sans); }
+    button, input, select, textarea { font: inherit; }
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 238px minmax(0, 1fr); }
+    .sidebar { position: sticky; top: 0; height: 100vh; padding: 27px 17px 20px; background: var(--surface); border-right: 1px solid var(--line); backdrop-filter: blur(16px); display: flex; flex-direction: column; z-index: 3; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 9px; text-decoration: none; color: var(--ink); }
+    .brand-mark { width: 44px; height: 44px; flex: none; overflow: hidden; border: 1px solid var(--line); border-radius: 34%; background: #fcf9f6; }
+    .brand-mark img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .brand-name { display: flex; align-items: center; font: 700 17px/1 'Comfortaa', cursive, sans-serif; white-space: nowrap; }
+    .brand-care { color: #5c7866; }
+    .brand-circle { color: #6a8eb3; }
+    .circle-switch { display: flex; align-items: center; gap: 10px; margin: 34px 2px 25px; padding: 11px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); backdrop-filter: blur(14px); text-align: left; cursor: pointer; }
+    .circle-avatar { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font: 700 13px var(--sans); }
+    .circle-label { flex: 1; min-width: 0; }
+    .circle-label strong { display: block; font-size: 12px; font-weight: 700; }
+    .circle-label span { color: var(--muted); font-size: 11px; }
+    .chevron { color: var(--muted); width: 15px; }
+    .nav-label { padding: 0 11px; margin: 2px 0 9px; color: var(--muted); font-size: 10px; letter-spacing: 1.2px; font-weight: 700; text-transform: uppercase; }
+    .nav { display: grid; gap: 4px; }
+    .nav a { display: flex; align-items: center; gap: 12px; min-height: 41px; padding: 0 11px; border-radius: 9px; color: var(--muted); text-decoration: none; font-size: 13px; transition: background .2s var(--ease-out), color .2s var(--ease-out), transform .2s var(--ease-out); }
+    .nav a:hover { color: var(--green-dark); background: var(--surface-muted); transform: translateX(2px); }
+    .nav a.active { color: var(--green-dark); background: var(--green-soft); font-weight: 700; }
+    .nav svg { width: 17px; height: 17px; stroke-width: 1.8; }
+    .nav-count { margin-left: auto; font-size: 11px; color: var(--muted); }
+    .sidebar-bottom { margin-top: auto; }
+    .help-note { padding: 14px 13px; border-radius: 12px; background: var(--green-soft); color: var(--green-dark); }
+    .help-note strong { display: block; margin-bottom: 3px; font: 700 15px var(--heading); }
+    .help-note p { margin: 0; font-size: 11px; line-height: 1.55; color: var(--muted); }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; margin: 17px 4px 0; padding-top: 15px; border-top: 1px solid var(--line); }
+    .user-avatar { width: 33px; height: 33px; display: grid; place-items: center; flex: none; border-radius: 50%; background: #dce8db; color: #3d6247; font-size: 11px; font-weight: 700; }
+    .sidebar-user strong { display: block; font-size: 12px; }
+    .sidebar-user span { font-size: 10px; color: var(--muted); }
+    main { width: min(100%, 1440px); margin: 0 auto; padding: 0 38px 60px; }
+    .topbar { height: 73px; display: flex; justify-content: flex-end; align-items: center; gap: 17px; border-bottom: 1px solid var(--line); }
+    .top-date { margin-right: auto; color: var(--muted); font-size: 12px; }
+    .icon-button { position: relative; width: 36px; height: 36px; padding: 0; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 34%; background: var(--surface); backdrop-filter: blur(12px); cursor: pointer; transition: transform .2s var(--ease-out), border-color .2s var(--ease-out), background .2s var(--ease-out); }
+    .icon-button:hover { transform: scale(1.04); border-color: var(--green); background: var(--surface-muted); }
+    .icon-button svg { width: 17px; height: 17px; stroke-width: 1.8; }
+    .notification-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: var(--red); border: 1px solid var(--surface); border-radius: 50%; }
+    .top-user { width: 36px; height: 36px; padding: 0; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font: 700 9px var(--sans); cursor: pointer; transition: transform .2s var(--ease-out), border-color .2s var(--ease-out); }
+    .top-user:hover { transform: scale(1.05); border-color: var(--green); }
+    .page-heading { padding: 29px 0 22px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+    .eyebrow { margin: 0 0 7px; color: var(--green); text-transform: uppercase; letter-spacing: 1.25px; font-size: 10px; font-weight: 700; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 5px; font: 700 32px/1.15 var(--heading); letter-spacing: 0; }
+    h1.logo-heading { display: flex; align-items: baseline; font: 700 36px/1.1 'Comfortaa', cursive, sans-serif; letter-spacing: 0; }
+    .subtitle { margin: 0; color: var(--muted); font-size: 13px; }
+    .heading-actions { display: flex; gap: 9px; }
+    .button { height: 37px; padding: 0 13px; display: inline-flex; justify-content: center; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 700; text-decoration: none; cursor: pointer; transition: transform .2s var(--ease-out), background .2s var(--ease-out), border-color .2s var(--ease-out); }
+    .button:hover { transform: scale(1.02); border-color: color-mix(in srgb, var(--green) 35%, var(--line)); background: var(--surface-muted); }
+    .button:active { transform: scale(.98); }
+    .button svg { width: 15px; height: 15px; }
+    .button.primary { border-color: var(--green); background: var(--green); color: white; }
+    .button.primary:hover { background: var(--green-dark); }
+    .summary-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.2fr; gap: 0; margin-bottom: 24px; padding: 10px 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); backdrop-filter: blur(14px); animation: rise .45s var(--ease-out) both; }
+    .summary-card { min-height: 75px; padding: 10px 16px; border: 0; border-radius: 0; background: transparent; }
+    .summary-card + .summary-card { border-left: 1px solid var(--line); }
+    .summary-card:nth-child(2) { animation-delay: .05s; }
+    .summary-card:nth-child(3) { animation-delay: .1s; }
+    .summary-card:nth-child(4) { animation-delay: .15s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    .summary-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: var(--muted); font-size: 11px; }
+    .summary-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 34%; }
+    .summary-icon svg { width: 15px; height: 15px; }
+    .summary-icon.green { color: var(--green); background: var(--green-soft); }
+    .summary-icon.amber { color: var(--amber); background: var(--amber-soft); }
+    .summary-icon.red { color: var(--red); background: var(--red-soft); }
+    .summary-icon.blue { color: var(--blue); background: var(--blue-soft); }
+    .summary-value { display: flex; align-items: baseline; gap: 8px; }
+    .summary-value strong { font: 700 25px/1.1 var(--heading); }
+    .summary-value span { color: var(--muted); font-size: 10px; }
+    .summary-card.next .summary-value strong { font: 700 18px/1.2 var(--heading); }
+    .summary-card.next .summary-value span { display: block; }
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, .95fr); align-items: start; gap: 24px; }
+    .column { display: grid; gap: 20px; min-width: 0; }
+    [hidden] { display: none !important; }
+    .content-grid[data-view] { grid-template-columns: minmax(0, 1fr); }
+    .content-grid[data-view] > .column { display: contents; }
+    .content-grid[data-view="today"] [data-view-section]:not([data-view-section~="today"]), .content-grid[data-view="tasks"] [data-view-section]:not([data-view-section~="tasks"]), .content-grid[data-view="schedule"] [data-view-section]:not([data-view-section~="schedule"]), .content-grid[data-view="circle"] [data-view-section]:not([data-view-section~="circle"]) { display: none; }
+    .content-grid[data-view="circle"] #care-load { order: 1; }
+    .content-grid[data-view="circle"] #circle { order: 2; }
+    .content-grid[data-view="circle"] #care-team { order: 3; }
+    .content-grid[data-view="circle"] #history { order: 4; }
+    .content-grid[data-view="circle"] #family-circle { order: 0; }
+    .content-grid[data-view="circle"] #family-feed-panel { order: 5; }
+    .task-filters { display: none; align-items: center; gap: 6px; padding: 10px 16px 2px; }
+    body[data-page="tasks"] .task-filters { display: flex; }
+    .task-filter { padding: 5px 10px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .task-filter[aria-pressed="true"] { border-color: var(--line); background: var(--surface-muted); color: var(--ink); font-weight: 700; }
+    .team-list { padding: 2px 16px 10px; }
+    .team-member { min-height: 57px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+    .team-member:last-child { border-bottom: 0; }
+    .team-avatar { width: 31px; height: 31px; display: grid; place-items: center; flex: none; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font-size: 9px; font-weight: 700; }
+    .team-copy { min-width: 0; flex: 1; }
+    .team-copy strong { display: block; font-size: 11px; }
+    .team-copy small { display: block; color: var(--muted); font-size: 9px; }
+    .team-role { padding: 4px 7px; border-radius: 20px; background: var(--surface-muted); color: var(--muted); font-size: 9px; }
+    .alert-hub { min-height: 76px; margin: 0 0 18px; padding: 13px 16px; display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: start; gap: 13px; border: 1px solid var(--line); border-left: 3px solid var(--green); border-radius: 12px; background: var(--surface); backdrop-filter: blur(16px); }
+    .alert-hub.critical { border-color: color-mix(in srgb, var(--red) 48%, var(--line)); border-left-color: var(--red); }
+    .alert-emblem { width: 34px; height: 34px; margin-top: 2px; display: grid; place-items: center; border: 1px solid currentColor; border-radius: 10px; color: var(--green); }
+    .alert-hub.critical .alert-emblem { color: var(--red); }
+    .alert-emblem svg { width: 17px; height: 17px; }
+    .alert-copy { min-width: 0; }
+    .alert-copy small { display: block; margin-bottom: 2px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+    .alert-copy strong { display: block; font-size: 12px; }
+    .alert-copy p { margin: 2px 0 0; color: var(--muted); font-size: 10px; }
+    .alert-stack { display: grid; gap: 7px; margin-top: 9px; }
+    .alert-item { display: grid; grid-template-columns: 8px minmax(0, 1fr); align-items: start; gap: 8px; padding: 9px 11px; border: 1px solid color-mix(in srgb, var(--red) 36%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--red) 6%, var(--surface)); }
+    .alert-item-dot { width: 7px; height: 7px; margin-top: 4px; border-radius: 50%; background: var(--red); }
+    .alert-item strong { display: block; font-size: 10px; line-height: 1.4; }
+    .alert-item small { display: block; margin-top: 1px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .alert-action { padding: 7px 10px; border: 1px solid var(--red); border-radius: 8px; background: transparent; color: var(--red); font-size: 10px; font-weight: 700; cursor: pointer; transition: transform .2s var(--ease-out), background .2s var(--ease-out); }
+    .alert-action:hover { transform: scale(1.03); background: var(--red-soft); }
+    .alert-hub.quiet .alert-action { border-color: var(--line); color: var(--muted); }
+    .family-circle-panel { overflow: visible; }
+    .circle-legend { display: flex; flex-wrap: wrap; gap: 6px 13px; padding: 0 19px 9px; }
+    .circle-legend span { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 9px; }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .legend-dot.water { background: #59a9b4; }
+    .legend-dot.activity { background: #8abf83; }
+    .legend-dot.vitals { background: #e2a267; }
+    .legend-dot.mood { background: #bb8dcc; }
+    .orbit-stage { position: relative; min-height: 450px; margin: 0 18px; isolation: isolate; }
+    .orbit-lines { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; overflow: visible; }
+    .orbit-lines path { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 4 5; }
+    .circle-core { position: absolute; top: 50%; left: 50%; width: 116px; height: 116px; transform: translate(-50%, -50%); display: grid; align-content: center; justify-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); backdrop-filter: blur(14px); text-align: center; }
+    .circle-core svg { width: 23px; height: 23px; margin-bottom: 5px; color: var(--green); }
+    .circle-core strong { font-size: 9px; }
+    .circle-core small { margin-top: 2px; color: var(--muted); font-size: 8px; }
+    .member-node { position: absolute; top: var(--node-y); left: var(--node-x); width: 100px; display: grid; justify-items: center; gap: 5px; padding: 3px; transform: translate(-50%, -50%); border: 0; border-radius: 12px; background: transparent; color: var(--ink); cursor: pointer; transition: transform .22s var(--ease-out), background .22s var(--ease-out); }
+    .member-node:hover, .member-node[aria-pressed="true"] { transform: translate(-50%, -50%) scale(1.04); background: var(--surface-muted); }
+    .member-node:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+    .member-ring { position: relative; width: 68px; height: 68px; display: grid; place-items: center; }
+    .ring-track { position: absolute; inset: var(--ring-inset); border-radius: 50%; background: conic-gradient(var(--ring-color) calc(var(--progress) * 1%), var(--line) 0); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px)); transform: rotate(-90deg); }
+    .ring-track.water { --ring-inset: -10px; --ring-color: #59a9b4; --progress: var(--water); }
+    .ring-track.activity { --ring-inset: -6px; --ring-color: #8abf83; --progress: var(--activity); }
+    .ring-track.vitals { --ring-inset: -2px; --ring-color: #e2a267; --progress: var(--vitals); }
+    .ring-track.mood { --ring-inset: 2px; --ring-color: #bb8dcc; --progress: var(--mood); }
+    .member-avatar { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 700; }
+    .member-label { max-width: 100%; overflow: hidden; font-size: 10px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .member-mood { color: var(--muted); font-size: 8px; }
+    .member-detail { margin: 0 18px 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-muted); }
+    .member-detail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+    .member-detail-head strong { font-size: 12px; }
+    .member-detail-head small { display: block; color: var(--muted); font-size: 9px; }
+    .member-streak { display: flex; align-items: center; gap: 9px; margin-bottom: 11px; padding: 0 0 10px; border-bottom: 1px solid var(--line); }
+    .streak-symbol { width: 30px; height: 30px; display: grid; place-items: center; flex: none; border: 1px solid color-mix(in srgb, var(--amber) 55%, var(--line)); border-radius: 10px; color: var(--amber); }
+    .streak-symbol svg { width: 15px; height: 15px; }
+    .streak-copy strong { display: block; font-size: 11px; }
+    .streak-copy small { display: block; margin-top: 1px; color: var(--muted); font-size: 9px; }
+    .member-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+    .member-metric { min-width: 0; padding: 0 12px; border-left: 1px solid var(--line); }
+    .member-metric:first-child { padding-left: 0; border-left: 0; }
+    .member-metric small { display: block; color: var(--muted); font-size: 8px; }
+    .member-metric strong { display: block; margin-top: 2px; overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .member-card-action { flex: none; }
+    .family-feed { padding: 0 19px 10px; }
+    .feed-event { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 55px; border-bottom: 1px solid var(--line); }
+    .feed-event:last-child { border-bottom: 0; }
+    .feed-icon { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 9px; color: var(--green); }
+    .feed-icon svg { width: 15px; height: 15px; }
+    .feed-copy strong { display: block; font-size: 10px; }
+    .feed-copy small { display: block; color: var(--muted); font-size: 9px; }
+    .feed-time { color: var(--muted); font-size: 9px; }
+    .circle-disclaimer { margin: 0 19px 15px; color: var(--muted); font-size: 9px; }
+    .health-status-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 9px 18px 14px; }
+    .health-group { min-width: 0; padding: 4px 13px 8px; border-left: 1px solid var(--line); }
+    .health-group:first-child { padding-left: 0; border-left: 0; }
+    .health-group-heading { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+    .health-group-heading strong { font-size: 10px; }
+    .health-count { margin-left: auto; color: var(--muted); font-size: 9px; }
+    .health-status-dot { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--muted); }
+    .health-group.at-risk .health-status-dot { background: var(--red); }
+    .health-group.unhealthy .health-status-dot { background: var(--amber); }
+    .health-group.healthy .health-status-dot { background: var(--green); }
+    .health-group.good-health .health-status-dot { background: var(--blue); }
+    .health-record-row { padding: 8px 0; border-top: 1px solid var(--line); }
+    .health-record-row strong { display: block; font-size: 10px; }
+    .health-record-row small { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; line-height: 1.45; }
+    .health-empty { padding: 6px 0; color: var(--muted); font-size: 9px; }
+    .health-unrecorded { margin: 0 18px 10px; padding: 10px 12px; border-top: 1px solid var(--line); }
+    .health-unrecorded > strong { display: block; margin-bottom: 6px; font-size: 9px; color: var(--muted); text-transform: uppercase; }
+    .health-unrecorded-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .health-unrecorded-list span { padding: 4px 8px; border: 1px solid var(--line); border-radius: 9px; color: var(--muted); font-size: 9px; }
+    .health-disclaimer { margin: 0 18px 15px; color: var(--muted); font-size: 9px; line-height: 1.5; }
+    .field-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .urgent-notification { margin: 5px 0; padding-left: 11px; border-left: 2px solid var(--red); border-radius: 2px; background: color-mix(in srgb, var(--red) 7%, transparent); }
+    .panel { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); backdrop-filter: blur(14px); overflow: hidden; scroll-margin-top: 20px; }
+    .panel-head { min-height: 62px; padding: 15px 19px; display: flex; justify-content: space-between; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+    .panel-title { display: flex; align-items: center; gap: 9px; }
+    .panel-title svg { width: 16px; height: 16px; color: var(--green); }
+    .panel-title h2 { margin: 0; font: 700 15px/1.2 var(--heading); }
+    .panel-title small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; font-weight: 400; }
+    .text-link { padding: 4px 0; border: 0; background: transparent; color: var(--green); font-size: 11px; font-weight: 700; text-decoration: none; cursor: pointer; transition: color .2s var(--ease-out), transform .2s var(--ease-out); }
+    .text-link:hover { color: var(--green-dark); transform: translateY(-1px); }
+    .task-list { padding: 0 16px; }
+    .task-row { min-height: 63px; display: grid; grid-template-columns: 23px minmax(0, 1fr) minmax(91px, 130px) 77px; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+    .task-row:last-child { border-bottom: 0; }
+    .task-check { width: 19px; height: 19px; display: grid; place-items: center; padding: 0; border: 1.5px solid var(--muted); border-radius: 7px; background: transparent; color: white; cursor: pointer; }
+    .task-check:hover { border-color: var(--green); }
+    .task-check[aria-pressed="true"] { border-color: var(--green); background: var(--green); }
+    .task-check svg { width: 12px; height: 12px; }
+    .task-name { overflow: hidden; }
+    .task-name strong { display: block; overflow: hidden; color: var(--ink); font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .task-name small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .task-name.is-done strong { color: var(--muted); text-decoration: line-through; }
+    .assignee-select { width: 100%; min-width: 0; padding: 5px 22px 5px 8px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .assignee-select:hover, .assignee-select:focus { border-color: var(--line); outline: 0; background: var(--surface); }
+    .status { justify-self: end; padding: 3px 7px; border: 1px solid currentColor; border-radius: 7px; background: transparent; font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .status.done { color: var(--green); }
+    .status.pending { color: var(--amber); }
+    .status.late { color: var(--red); }
+    .empty-state { padding: 24px 10px; color: var(--muted); text-align: center; font-size: 12px; }
+    .med-list { padding: 3px 16px 8px; }
+    .med-row { min-height: 60px; display: flex; align-items: center; gap: 11px; border-bottom: 1px solid var(--line); }
+    .med-row:last-child { border: 0; }
+    .med-time { width: 51px; flex: none; color: var(--muted); font-size: 10px; }
+    .med-pill { width: 31px; height: 31px; display: grid; place-items: center; flex: none; border-radius: 34%; background: var(--amber-soft); color: var(--amber); }
+    .med-pill svg { width: 16px; height: 16px; }
+    .med-copy { min-width: 0; flex: 1; }
+    .med-copy strong { display: block; overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .med-copy span { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .med-action { min-width: 65px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--green-soft); color: var(--green-dark); font-size: 10px; font-weight: 700; cursor: pointer; }
+    .med-action.taken { border-color: transparent; background: transparent; color: var(--green); cursor: default; }
+    .appointment-list { padding: 3px 16px 10px; }
+    .appointment { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 11px; min-height: 69px; border-bottom: 1px solid var(--line); }
+    .appointment:last-child { border-bottom: 0; }
+    .date-tile { width: 39px; padding: 5px 2px; border-radius: 7px; background: var(--surface-muted); text-align: center; }
+    .date-tile strong { display: block; color: var(--green-dark); font-size: 15px; line-height: 1.2; }
+    .date-tile span { color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .7px; }
+    .appointment-copy strong { display: block; font-size: 11px; }
+    .appointment-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .appointment-who { color: var(--muted); font-size: 10px; text-align: right; }
+    .load-panel { padding-bottom: 4px; }
+    .load-note { margin: 0; padding: 12px 16px 4px; color: var(--muted); font-size: 10px; }
+    .load-list { padding: 6px 16px 13px; }
+    .load-row { display: grid; grid-template-columns: 64px minmax(45px, 1fr) 24px; align-items: center; gap: 8px; min-height: 34px; }
+    .load-person { overflow: hidden; color: var(--ink); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .load-track { height: 8px; border-radius: 10px; background: var(--line); overflow: hidden; }
+    .load-bar { height: 100%; min-width: 0; border-radius: inherit; background: var(--green); transition: width .25s; }
+    .load-row:nth-child(2) .load-bar { background: var(--load-secondary); }
+    .load-row:nth-child(3) .load-bar { background: var(--load-tertiary); }
+    .load-number { color: var(--muted); font-size: 10px; text-align: right; }
+    .load-footer { margin: 0 16px 12px; padding: 10px; display: flex; align-items: center; gap: 9px; border-radius: 7px; background: var(--surface-muted); color: var(--muted); font-size: 10px; }
+    .load-footer svg { width: 15px; height: 15px; flex: none; color: var(--green); }
+    .emergency-panel { border-color: var(--line); }
+    .emergency-panel .panel-head { border-color: var(--line); }
+    .emergency-panel .panel-title svg { color: var(--red); }
+    .emergency-content { padding: 14px 16px 16px; }
+    .contact-block { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .contact-icon { width: 31px; height: 31px; display: grid; place-items: center; flex: none; border-radius: 34%; background: var(--red-soft); color: var(--red); }
+    .contact-icon svg { width: 16px; height: 16px; }
+    .contact-block strong { display: block; font-size: 11px; }
+    .contact-block > div > span { display: block; color: var(--muted); font-size: 10px; }
+    .call-link { margin-left: auto; color: var(--green); font-size: 10px; font-weight: 700; text-decoration: none; }
+    .info-line { padding: 9px 0; border-top: 1px solid var(--line); }
+    .info-line small { display: block; margin-bottom: 2px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+    .info-line p { margin: 0; color: var(--ink); font-size: 10px; }
+    .history-panel .panel-head { border-bottom: 0; }
+    .history-list { padding: 0 16px 12px; }
+    .history-item { position: relative; display: grid; grid-template-columns: 48px 1fr 50px; gap: 8px; min-height: 31px; align-items: center; }
+    .history-time { color: var(--muted); font-size: 9px; }
+    .history-event { color: var(--ink); font-size: 10px; }
+    .history-person { color: var(--muted); font-size: 9px; text-align: right; }
+    .footnote { padding: 18px 2px; color: var(--muted); font-size: 9px; }
+    .toast { position: fixed; z-index: 10; left: 50%; bottom: 24px; transform: translate(-50%, 15px); padding: 11px 16px; border-radius: 8px; background: #273b2d; color: white; font-size: 12px; box-shadow: 0 8px 24px #1d302429; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    dialog { width: min(480px, calc(100vw - 30px)); padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); backdrop-filter: blur(18px); color: var(--ink); box-shadow: 0 24px 70px #25342630; }
+    dialog::backdrop { background: #1d282466; backdrop-filter: blur(2px); }
+    .dialog-head { padding: 20px 24px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .dialog-head h2 { margin: 0; font: 700 20px/1.2 var(--heading); }
+    .dialog-body { padding: 22px 24px 24px; }
+    .form-grid { display: grid; gap: 12px; }
+    .field label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 10px; font-weight: 700; }
+    .field input, .field select, .field textarea { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font-size: 12px; }
+    .field textarea { min-height: 70px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: #89a08a; outline: 2px solid #89a08a30; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 17px; }
+    .mobile-nav { display: none; }
+    .settings-panel { margin-top: 16px; }
+    .settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; padding: 4px 18px 18px; }
+    .setting-group { min-width: 0; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .setting-group h3 { margin: 0 0 4px; font-size: 12px; }
+    .setting-group > p { margin: 0 0 12px; color: var(--muted); font-size: 10px; }
+    .setting-group-copy { margin: 12px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .theme-options { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-muted); }
+    .theme-option { min-height: 32px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; }
+    .theme-option[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px #1d302418; }
+    .setting-toggle { min-height: 43px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .setting-toggle + .setting-toggle { border-top: 1px solid var(--line); }
+    .setting-toggle-copy { min-width: 0; flex: 1; }
+    .setting-toggle-copy strong { display: block; font-size: 11px; }
+    .setting-toggle-copy small { display: block; color: var(--muted); font-size: 9px; }
+    .setting-toggle input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+    .toggle-track { position: relative; width: 34px; height: 19px; flex: none; border-radius: 20px; background: var(--line); transition: background .18s; }
+    .toggle-track::after { position: absolute; top: 3px; left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--surface); content: ''; transition: transform .18s; }
+    .setting-toggle input:checked + .toggle-track { background: var(--green); }
+    .setting-toggle input:checked + .toggle-track::after { transform: translateX(15px); }
+    .setting-toggle input:focus-visible + .toggle-track { outline: 2px solid var(--green); outline-offset: 2px; }
+    .settings-data { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .settings-data p { margin: 0; color: var(--muted); font-size: 10px; }
+    .settings-data .button { flex: none; }
+    .setting-group.wide { grid-column: 1 / -1; }
+    :root[data-theme="dark"] .button.primary, :root[data-theme="dark"] .task-check[aria-pressed="true"], :root[data-theme="dark"] .brand-mark { color: #25272c; }
+    :root[data-theme="dark"] .user-avatar { background: var(--green-soft); color: var(--green-dark); }
+    :root[data-theme="dark"] .toast { background: #303238; color: #eeeef0; }
+    :root[data-theme="dark"] .brand-care { color: #b9d0bf; }
+    :root[data-theme="dark"] .brand-circle { color: #b5cce3; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .button.primary, :root:not([data-theme="light"]) .task-check[aria-pressed="true"], :root:not([data-theme="light"]) .brand-mark { color: #25272c; }
+      :root:not([data-theme="light"]) .user-avatar { background: var(--green-soft); color: var(--green-dark); }
+      :root:not([data-theme="light"]) .toast { background: #303238; color: #eeeef0; }
+      :root:not([data-theme="light"]) .brand-care { color: #b9d0bf; }
+      :root:not([data-theme="light"]) .brand-circle { color: #b5cce3; }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #1b1c20;
+      --surface: rgba(39, 41, 46, .88);
+      --surface-muted: rgba(255, 255, 255, .055);
+      --ink: #eeeef0;
+      --muted: #b2b2bc;
+      --line: rgba(255, 255, 255, .09);
+      --green: #b0c9b0;
+      --green-dark: #d7e4d5;
+      --green-soft: rgba(176, 201, 176, .13);
+      --amber: #e7c28b;
+      --amber-soft: #453d33;
+      --red: #dda5a4;
+      --red-soft: #453538;
+      --blue: #adc5d3;
+      --blue-soft: #333d43;
+      --load-secondary: #b5cbb1;
+      --load-tertiary: #e1bf91;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --paper: #1b1c20;
+        --surface: rgba(39, 41, 46, .88);
+        --surface-muted: rgba(255, 255, 255, .055);
+        --ink: #eeeef0;
+        --muted: #b2b2bc;
+        --line: rgba(255, 255, 255, .09);
+        --green: #b0c9b0;
+        --green-dark: #d7e4d5;
+        --green-soft: rgba(176, 201, 176, .13);
+        --amber: #e7c28b;
+        --amber-soft: #453d33;
+        --red: #dda5a4;
+        --red-soft: #453538;
+        --blue: #adc5d3;
+        --blue-soft: #333d43;
+        --load-secondary: #b5cbb1;
+        --load-tertiary: #e1bf91;
+      }
+    }
+    @media (min-width: 1400px) { main { padding-left: 48px; padding-right: 48px; } }
+    @media (max-width: 1080px) { .app { grid-template-columns: 205px minmax(0,1fr); } .sidebar { padding-left: 13px; padding-right: 13px; } main { padding: 0 24px 45px; } .summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 760px) { .app { display: block; } .sidebar { display: none; } main { padding: 0 16px 82px; } .topbar { height: 57px; } .page-heading { padding: 23px 0 18px; align-items: flex-start; flex-direction: column; gap: 14px; } h1 { font-size: 31px; } .heading-actions { width: 100%; } .heading-actions .button { flex: 1; } .summary-grid { gap: 9px; margin-bottom: 13px; } .summary-card { min-height: 96px; padding: 12px; } .summary-value strong { font-size: 25px; } .summary-card.next .summary-value strong { font-size: 18px; } .content-grid { grid-template-columns: 1fr; gap: 13px; } .column { gap: 13px; } .task-list { padding: 0 12px; } .task-row { grid-template-columns: 22px minmax(0,1fr) minmax(75px,100px); gap: 7px; } .task-row .status { grid-column: 2 / -1; justify-self: start; margin-top: -12px; margin-bottom: 8px; } .task-row { padding: 6px 0; } .task-row:has(.status) { min-height: 68px; } .assignee-select { font-size: 9px; } .mobile-nav { position: fixed; z-index: 5; bottom: 0; left: 0; right: 0; min-height: 62px; padding: 7px 9px max(7px, env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; border-top: 1px solid var(--line); background: #fffefaed; backdrop-filter: blur(12px); } .mobile-nav a { display: grid; justify-items: center; align-content: center; gap: 3px; color: #788078; font-size: 9px; text-decoration: none; } .mobile-nav a.active { color: var(--green); font-weight: 700; } .mobile-nav svg { width: 17px; height: 17px; } .top-date { font-size: 10px; } }
+    @media (max-width: 380px) { main { padding-left: 12px; padding-right: 12px; } .summary-top { font-size: 10px; } .summary-value { gap: 5px; } .appointment { grid-template-columns: 39px minmax(0,1fr) auto; gap: 8px; } .appointment-who { max-width: 52px; } }
+    @media (max-width: 1080px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-card:nth-child(3) { border-top: 1px solid var(--line); border-left: 0; }
+      .summary-card:nth-child(4) { border-top: 1px solid var(--line); }
+      .health-status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
+      .health-group:nth-child(3) { padding-left: 0; border-left: 0; }
+      .health-group:nth-child(n+3) { border-top: 1px solid var(--line); padding-top: 12px; }
+    }
+    @media (max-width: 760px) {
+      .settings-grid { grid-template-columns: 1fr; }
+      .setting-group.wide { grid-column: auto; }
+      .mobile-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface); }
+      .mobile-nav a { color: var(--muted); }
+      .alert-hub { grid-template-columns: 34px minmax(0, 1fr); gap: 9px; padding: 12px; }
+      .alert-action { grid-column: 2; justify-self: start; }
+      .alert-copy p { line-height: 1.45; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin-bottom: 16px; padding: 6px; }
+      .summary-card { min-height: 82px; padding: 11px 10px; }
+      .summary-card:nth-child(2) { border-top: 0; }
+      .summary-card:nth-child(2n+1) { border-left: 0; }
+      .summary-card:nth-child(n+3) { border-top: 1px solid var(--line); }
+      .summary-top { gap: 5px; font-size: 9px; }
+      .summary-icon { width: 24px; height: 24px; flex: none; }
+      .summary-value { flex-wrap: wrap; }
+      .orbit-stage { min-height: 410px; margin: 0 4px; }
+      .member-node { width: 88px; gap: 3px; }
+      .member-ring { width: 56px; height: 56px; }
+      .member-avatar { width: 36px; height: 36px; }
+      .member-label { font-size: 9px; }
+      .member-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 10px; }
+      .member-metric:nth-child(3) { padding-left: 0; border-left: 0; }
+      .member-detail-head { align-items: flex-start; }
+      .feed-event { grid-template-columns: 30px minmax(0, 1fr) auto; gap: 8px; }
+      .feed-time { font-size: 8px; }
+      .health-status-grid { padding: 8px 13px 12px; }
+      .health-group { padding-right: 8px; padding-left: 9px; }
+      .health-group:nth-child(2n+1) { padding-left: 0; border-left: 0; }
+    }
+    @media (max-width: 760px) {
+      .task-row { grid-template-columns: 22px minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; row-gap: 5px; min-height: 0; padding: 9px 0; }
+      .task-row:has(.status) { min-height: 0; }
+      .task-row .task-check { grid-column: 1; grid-row: 1 / span 2; align-self: start; margin-top: 3px; }
+      .task-row .task-name { grid-column: 2; grid-row: 1; min-width: 0; }
+      .task-row .assignee-select { grid-column: 3; grid-row: 1; width: auto; max-width: 86px; padding: 4px 15px 4px 4px; }
+      .task-row .status { grid-column: 2 / 4; grid-row: 2; justify-self: start; margin: 0 0 1px; }
+    }
+    @media (max-width: 760px) {
+      .task-row { grid-template-columns: 22px minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; row-gap: 5px; min-height: 0; padding: 9px 0; }
+      .task-row:has(.status) { min-height: 0; }
+      .task-row .task-check { grid-column: 1; grid-row: 1 / span 2; align-self: start; margin-top: 3px; }
+      .task-row .task-name { grid-column: 2; grid-row: 1; min-width: 0; }
+      .task-row .assignee-select { grid-column: 3; grid-row: 1; width: auto; max-width: 86px; padding: 4px 15px 4px 4px; }
+      .task-row .status { grid-column: 2 / 4; grid-row: 2; justify-self: start; margin: 0 0 1px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-checklist" viewBox="0 0 24 24"><path d="m9 11 2 2 4-4M9 5h11M9 19h11M4 5h.01M4 12h.01M4 19h.01"/><path d="M9 12h11"/></symbol>
+    <symbol id="i-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a5.7 5.7 0 0 0-8-8l-10 10a5.7 5.7 0 0 0 8 8Z"/><path d="m8.5 8.5 7 7"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.5 2.8a2 2 0 0 1-.6 1.9L7.1 10.3a16 16 0 0 0 6 6l1.9-1.9a2 2 0 0 1 1.9-.6l2.8.5a2 2 0 0 1 1.7 2.6Z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 2.1 18a2 2 0 0 0 1.7 3h16.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0ZM12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3ZM19 14l1.2 2.8L23 18l-2.8 1.2L19 22l-1.2-2.8L15 18l2.8-1.2L19 14Z"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9Z" transform="translate(-1 -1)"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  </svg>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="#view-today" data-view-link="today" aria-label="CareCircle home"><span class="brand-mark"><img src="family-circle-mark.svg" alt=""></span><span class="brand-name"><span class="brand-care">Care</span><span class="brand-circle">Circle</span></span></a>
+      <button class="circle-switch" type="button" id="profileButton" aria-label="Edit care recipient profile"><span class="circle-avatar">F</span><span class="circle-label"><strong>Family health circle</strong><span>5 members · shared care</span></span><svg class="chevron" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-chevron"/></svg></button>
+      <div class="nav-label">Workspace</div>
+      <nav class="nav" aria-label="Main navigation">
+        <a class="active" href="#view-today" data-view-link="today"><svg fill="none" stroke="currentColor"><use href="#i-grid"/></svg>Today</a>
+        <a href="#view-tasks" data-view-link="tasks"><svg fill="none" stroke="currentColor"><use href="#i-checklist"/></svg>Tasks<span class="nav-count" id="navTaskCount">5</span></a>
+        <a href="#view-schedule" data-view-link="schedule"><svg fill="none" stroke="currentColor"><use href="#i-calendar"/></svg>Schedule</a>
+        <a href="#view-circle" data-view-link="circle"><svg fill="none" stroke="currentColor"><use href="#i-users"/></svg>Circle</a>
+        <a href="#view-settings" data-view-link="settings"><svg fill="none" stroke="currentColor"><use href="#i-settings"/></svg>Settings</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-note"><strong>Care, together.</strong><p>A little coordination goes a long way. Thanks for showing up for each other.</p></div>
+        <div class="sidebar-user"><div class="user-avatar" id="sidebarUserAvatar">YOU</div><div><strong id="sidebarUserName">YOU</strong><span>Circle admin · this device</span></div></div>
+      </div>
+    </aside>
+    <main id="overview">
+      <header class="topbar"><span class="top-date" id="todayDate"></span><button class="icon-button" id="notificationButton" aria-label="View reminders" title="View reminders"><svg fill="none" stroke="currentColor"><use href="#i-bell"/></svg><span class="notification-dot"></span></button><button class="top-user" id="accountButton" type="button" aria-label="Edit your local profile" title="Edit your local profile">YOU</button></header>
+      <section class="page-heading">
+        <div><p class="eyebrow" id="pageEyebrow">Your family care, in sync</p><h1 id="pageTitle" class="logo-heading"><span class="brand-care">Care</span><span class="brand-circle">Circle</span></h1><p class="subtitle" id="pageSubtitle">A shared view of the little things that make a big difference.</p></div>
+        <div class="heading-actions"><button class="button" id="appointmentButton"><svg fill="none" stroke="currentColor"><use href="#i-calendar"/></svg>Add appointment</button><button class="button primary" id="addTaskButton"><svg fill="none" stroke="currentColor"><use href="#i-plus"/></svg>New task</button></div>
+      </section>
+      <section class="alert-hub quiet" id="alertHub" aria-live="polite">
+        <span class="alert-emblem" id="alertEmblem"></span>
+        <div class="alert-copy"><small id="alertLabel">Care alerts</small><strong id="alertHeadline">Checking today's care...</strong><p id="alertDetail"></p><div class="alert-stack" id="alertStack" aria-label="Warnings"></div></div>
+        <button class="alert-action" type="button" id="alertAction">Open alerts</button>
+      </section>
+      <section class="summary-grid" id="summaryGrid" aria-label="Care summary">
+        <article class="summary-card"><div class="summary-top">Tasks completed <span class="summary-icon green"><svg fill="none" stroke="currentColor"><use href="#i-check"/></svg></span></div><div class="summary-value"><strong id="completedCount">3</strong><span>of <span id="totalCount">5</span> today</span></div></article>
+        <article class="summary-card"><div class="summary-top">Still to do <span class="summary-icon amber"><svg fill="none" stroke="currentColor"><use href="#i-clock"/></svg></span></div><div class="summary-value"><strong id="pendingCount">2</strong><span>on today's list</span></div></article>
+        <article class="summary-card"><div class="summary-top">Overdue <span class="summary-icon red"><svg fill="none" stroke="currentColor"><use href="#i-alert"/></svg></span></div><div class="summary-value"><strong id="overdueCount">0</strong><span>needs a check-in</span></div></article>
+        <article class="summary-card next"><div class="summary-top">Next appointment <span class="summary-icon blue"><svg fill="none" stroke="currentColor"><use href="#i-calendar"/></svg></span></div><div class="summary-value"><strong id="nextAppointment">None planned</strong><span>No family appointments added</span></div></article>
+      </section>
+      <div class="content-grid" id="contentGrid" data-view="today">
+        <div class="column">
+          <section class="panel" id="tasks" data-view-section="today tasks">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-checklist"/></svg><h2><span id="taskPanelHeading">Today's care</span> <small id="taskSubhead">Tuesday, October 3</small></h2></div><button class="text-link" id="taskLink">+ Add task</button></div>
+            <div class="task-filters" id="taskFilters" role="group" aria-label="Filter care tasks"><button class="task-filter" type="button" data-task-filter="all" aria-pressed="true">All</button><button class="task-filter" type="button" data-task-filter="open" aria-pressed="false">Open</button><button class="task-filter" type="button" data-task-filter="overdue" aria-pressed="false">Overdue</button><button class="task-filter" type="button" data-task-filter="done" aria-pressed="false">Done</button></div>
+            <div class="task-list" id="taskList"></div>
+          </section>
+          <section class="panel" id="medications" data-view-section="schedule">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-pill"/></svg><h2>Medication schedule <small>Family logging only · follow prescribed instructions</small></h2></div><button class="text-link" id="medicationInfo">View all</button></div>
+            <div class="med-list" id="medicationList"></div>
+          </section>
+          <section class="panel" id="appointments" data-view-section="today schedule">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-calendar"/></svg><h2>Upcoming appointments</h2></div><button class="text-link" id="appointmentLink">+ Add</button></div>
+            <div class="appointment-list" id="appointmentList"></div>
+          </section>
+          <section class="panel history-panel" id="history" data-view-section="circle">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-history"/></svg><h2>Care history <small>Recent check-ins from your circle</small></h2></div></div>
+            <div class="history-list" id="historyList"></div>
+          </section>
+          <section class="panel" id="family-feed-panel" data-view-section="today circle">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-heart"/></svg><h2>Family wellbeing feed <small>Small check-ins, shared across the circle</small></h2></div><span class="nav-count">Today</span></div>
+            <div class="family-feed" id="wellbeingFeed"></div>
+            <p class="circle-disclaimer">Family-entered sample check-ins; no sensors or medical advice.</p>
+          </section>
+        </div>
+        <div class="column">
+          <section class="panel family-circle-panel" id="family-circle" data-view-section="circle">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-users"/></svg><h2>Family health circle <small>Select a member to see their check-in</small></h2></div><span class="nav-count">5 members</span></div>
+            <div class="circle-legend" aria-label="Ring colors"><span><i class="legend-dot water"></i>Hydration</span><span><i class="legend-dot activity"></i>Activity</span><span><i class="legend-dot vitals"></i>Vitals log</span><span><i class="legend-dot mood"></i>Mood</span></div>
+            <div class="orbit-stage" id="wellnessCircle" role="group" aria-label="Interactive family wellbeing circle">
+              <svg class="orbit-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 12 50 50M80 32 50 50M80 68 50 50M50 88 50 50M20 50 50 50"/></svg>
+              <div class="circle-core"><svg fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-heart"/></svg><strong>CARE TOGETHER</strong><small>Every member matters</small></div>
+              <div id="wellnessNodes"></div>
+            </div>
+            <div class="member-detail" id="memberDetail" aria-live="polite"></div>
+          </section>
+          <section class="panel" id="family-health-status" data-view-section="today circle">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-shield"/></svg><h2>Family health status <small>Latest category from each medical report</small></h2></div><button class="button" type="button" id="addMedicalRecordButton"><svg fill="none" stroke="currentColor"><use href="#i-plus"/></svg>Add record</button></div>
+            <div class="health-status-grid" id="healthStatusGroups"></div>
+            <div class="health-unrecorded" id="healthUnrecorded" hidden><strong>No report yet</strong><div class="health-unrecorded-list" id="healthUnrecordedList"></div></div>
+            <p class="health-disclaimer">Categories are entered from the medical report or care team; CareCircle does not diagnose or calculate health status from readings. Follow the clinician’s interpretation.</p>
+          </section>
+          <section class="panel load-panel" id="care-load" data-view-section="circle">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-users"/></svg><h2>Care load <small>Tasks assigned today</small></h2></div><button class="text-link" id="balanceButton">Balance</button></div>
+            <p class="load-note">A shared view makes it easier to share the little things.</p>
+            <div class="load-list" id="loadList"></div>
+            <div class="load-footer"><svg fill="none" stroke="currentColor"><use href="#i-spark"/></svg><span id="loadMessage">A thoughtful team makes lighter work.</span></div>
+          </section>
+          <section class="panel" id="care-team" data-view-section="circle">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-users"/></svg><h2>Care team <small>Everyone in the wellbeing circle</small></h2></div><span class="nav-count">5 members</span></div>
+            <div class="team-list" id="teamList"></div>
+          </section>
+          <section class="panel emergency-panel" id="circle" data-view-section="circle">
+            <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-shield"/></svg><h2>Important information</h2></div><button class="text-link" id="editProfileLink">Edit</button></div>
+            <div class="emergency-content" id="emergencyContent"></div>
+          </section>
+        </div>
+      </div>
+      <section class="panel settings-panel" id="settings" hidden>
+        <div class="panel-head"><div class="panel-title"><svg fill="none" stroke="currentColor"><use href="#i-settings"/></svg><h2>Settings <small>Preferences for this device and browser</small></h2></div></div>
+        <div class="settings-grid">
+          <div class="setting-group">
+            <h3>Appearance</h3>
+            <p>Choose how CareCircle looks on this device.</p>
+            <div class="theme-options" role="group" aria-label="Color theme">
+              <button class="theme-option" type="button" data-theme-option="light" aria-pressed="false">Light</button>
+              <button class="theme-option" type="button" data-theme-option="system" aria-pressed="true">System</button>
+              <button class="theme-option" type="button" data-theme-option="dark" aria-pressed="false">Dark</button>
+            </div>
+          </div>
+          <div class="setting-group">
+            <h3>In-app reminders</h3>
+            <p>Choose which reminders appear in the bell menu.</p>
+            <label class="setting-toggle"><span class="setting-toggle-copy"><strong>Care tasks</strong><small>Upcoming tasks assigned to your circle</small></span><input type="checkbox" data-reminder="tasks" checked><span class="toggle-track" aria-hidden="true"></span></label>
+            <label class="setting-toggle"><span class="setting-toggle-copy"><strong>Overdue tasks</strong><small>Tasks that are past their due time</small></span><input type="checkbox" data-reminder="overdue" checked><span class="toggle-track" aria-hidden="true"></span></label>
+            <label class="setting-toggle"><span class="setting-toggle-copy"><strong>Medication schedule</strong><small>Doses not yet logged as taken</small></span><input type="checkbox" data-reminder="medications" checked><span class="toggle-track" aria-hidden="true"></span></label>
+            <label class="setting-toggle"><span class="setting-toggle-copy"><strong>Appointments</strong><small>Your next scheduled visit</small></span><input type="checkbox" data-reminder="appointments" checked><span class="toggle-track" aria-hidden="true"></span></label>
+          </div>
+          <div class="setting-group settings-data wide">
+            <div><h3>Care data</h3><p>CareCircle stores this circle on this browser only. Export a JSON backup of the current profile, schedule, and history.</p></div>
+            <button class="button" type="button" id="exportDataButton"><svg fill="none" stroke="currentColor"><use href="#i-download"/></svg>Export data</button>
+          </div>
+        </div>
+      </section>
+      <p class="footnote">CareCircle helps families stay coordinated. It does not provide medical advice or emergency response.</p>
+    </main>
+  </div>
+  <nav class="mobile-nav" aria-label="Mobile navigation"><a class="active" href="#view-today" data-view-link="today"><svg fill="none" stroke="currentColor"><use href="#i-grid"/></svg>Today</a><a href="#view-tasks" data-view-link="tasks"><svg fill="none" stroke="currentColor"><use href="#i-checklist"/></svg>Tasks</a><a href="#view-schedule" data-view-link="schedule"><svg fill="none" stroke="currentColor"><use href="#i-calendar"/></svg>Schedule</a><a href="#view-circle" data-view-link="circle"><svg fill="none" stroke="currentColor"><use href="#i-users"/></svg>Circle</a><a href="#view-settings" data-view-link="settings"><svg fill="none" stroke="currentColor"><use href="#i-settings"/></svg>Settings</a></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="taskDialog"><form id="taskForm"><div class="dialog-head"><h2>Add a care task</h2><button class="icon-button" type="button" data-close="taskDialog" aria-label="Close"><span aria-hidden="true">×</span></button></div><div class="dialog-body"><div class="form-grid"><div class="field"><label for="taskTitle">Task</label><input id="taskTitle" name="title" required maxlength="80" placeholder="e.g. Prepare lunch"></div><div class="field"><label for="taskAssignee">Assign to</label><select id="taskAssignee" name="assignee"></select></div><div class="field"><label for="taskTime">Due time</label><input id="taskTime" name="time" type="time" value="12:00" required></div></div><div class="dialog-actions"><button class="button" type="button" data-close="taskDialog">Cancel</button><button class="button primary" type="submit">Add task</button></div></div></form></dialog>
+  <dialog id="appointmentDialog"><form id="appointmentForm"><div class="dialog-head"><h2>Add an appointment</h2><button class="icon-button" type="button" data-close="appointmentDialog" aria-label="Close"><span aria-hidden="true">×</span></button></div><div class="dialog-body"><div class="form-grid"><div class="field"><label for="appointmentTitle">Appointment</label><input id="appointmentTitle" name="title" required maxlength="80" placeholder="e.g. Follow-up visit"></div><div class="field"><label for="appointmentDate">Date</label><input id="appointmentDate" name="date" type="date" required></div><div class="field"><label for="appointmentTime">Time</label><input id="appointmentTime" name="time" type="time" value="10:00" required></div><div class="field"><label for="appointmentAssignee">Accompanied by</label><select id="appointmentAssignee" name="assignee"></select></div></div><div class="dialog-actions"><button class="button" type="button" data-close="appointmentDialog">Cancel</button><button class="button primary" type="submit">Add appointment</button></div></div></form></dialog>
+  <dialog id="profileDialog"><form id="profileForm"><div class="dialog-head"><h2>Care recipient profile</h2><button class="icon-button" type="button" data-close="profileDialog" aria-label="Close"><span aria-hidden="true">×</span></button></div><div class="dialog-body"><div class="form-grid"><div class="field"><label for="profileName">Name</label><input id="profileName" name="name" required maxlength="60"></div><div class="field"><label for="profileAge">Age</label><input id="profileAge" name="age" type="number" min="0" max="125"></div><div class="field"><label for="profileContact">Emergency contact</label><input id="profileContact" name="contact" required maxlength="60"></div><div class="field"><label for="profilePhone">Contact number</label><input id="profilePhone" name="phone" type="tel" maxlength="30"></div><div class="field"><label for="profileAllergies">Allergies</label><input id="profileAllergies" name="allergies" maxlength="120" placeholder="None known"></div><div class="field"><label for="profileNotes">Important notes & preferences</label><textarea id="profileNotes" name="notes" maxlength="300"></textarea></div></div><div class="dialog-actions"><button class="button" type="button" data-close="profileDialog">Cancel</button><button class="button primary" type="submit">Save profile</button></div></div></form></dialog>
+  <dialog id="accountDialog"><form id="accountForm"><div class="dialog-head"><h2 id="accountDialogTitle">Set up your profile</h2><button class="icon-button" type="button" data-close="accountDialog" aria-label="Close"><span aria-hidden="true">×</span></button></div><div class="dialog-body"><p class="subtitle">Choose the name your family will see on this device.</p><div class="field"><label for="accountNameInput">Your name</label><input id="accountNameInput" name="displayName" required maxlength="40" autocomplete="name" placeholder="e.g. Alex"></div><p class="setting-group-copy">This MVP saves a local profile only. It does not use a password or sync accounts between devices.</p><div class="dialog-actions"><button class="button" type="button" data-close="accountDialog">Cancel</button><button class="button primary" type="submit" id="accountSaveButton">Continue</button></div></div></form></dialog>
+  <dialog id="notificationDialog"><div class="dialog-head"><h2>Circle reminders</h2><button class="icon-button" type="button" data-close="notificationDialog" aria-label="Close"><span aria-hidden="true">×</span></button></div><div class="dialog-body" id="notificationContent"></div></dialog>
+  <dialog id="wellnessDialog"><form id="wellnessForm"><div class="dialog-head"><h2 id="wellnessDialogTitle">Log a wellbeing check-in</h2><button class="icon-button" type="button" data-close="wellnessDialog" aria-label="Close"><span aria-hidden="true">×</span></button></div><div class="dialog-body"><p class="subtitle">Family-entered check-in only. This does not measure or assess medical conditions.</p><div class="form-grid"><div class="field"><label for="wellnessHydration">Glasses of water today</label><input id="wellnessHydration" name="hydration" type="number" min="0" max="20" required></div><div class="field"><label for="wellnessActivity">Movement today (minutes)</label><input id="wellnessActivity" name="activity" type="number" min="0" max="600" required></div><div class="field"><label for="wellnessVitals">Vitals log</label><select id="wellnessVitals" name="vitals"><option value="false">Not logged</option><option value="true">Logged by family</option></select></div><div class="field"><label for="wellnessMood">How are they feeling?</label><select id="wellnessMood" name="mood"><option>Great</option><option>Good</option><option>Steady</option><option>Tired</option><option>Low</option></select></div></div><div class="dialog-actions"><button class="button" type="button" data-close="wellnessDialog">Cancel</button><button class="button primary" type="submit">Save check-in</button></div></div></form></dialog>
+  <dialog id="medicalRecordDialog"><form id="medicalRecordForm"><div class="dialog-head"><h2>Add a medical record</h2><button class="icon-button" type="button" data-close="medicalRecordDialog" aria-label="Close"><span aria-hidden="true">×</span></button></div><div class="dialog-body"><p class="subtitle">Enter values as written in the report. CareCircle does not interpret results.</p><div class="form-grid"><div class="field"><label for="recordMember">Family member</label><select id="recordMember" name="memberId" required></select></div><div class="field"><label for="recordDate">Report date</label><input id="recordDate" name="date" type="date" required></div><div class="field-pair"><div class="field"><label for="recordSystolic">Systolic BP · mmHg</label><input id="recordSystolic" name="systolic" type="number" min="0" max="400" step="1" placeholder="Optional"></div><div class="field"><label for="recordDiastolic">Diastolic BP · mmHg</label><input id="recordDiastolic" name="diastolic" type="number" min="0" max="300" step="1" placeholder="Optional"></div></div><div class="field-pair"><div class="field"><label for="recordGlucose">Blood sugar</label><input id="recordGlucose" name="glucose" type="number" min="0" step="any" placeholder="Optional"></div><div class="field"><label for="recordGlucoseUnit">Glucose unit</label><select id="recordGlucoseUnit" name="glucoseUnit"><option>mg/dL</option><option>mmol/L</option></select></div></div><div class="field-pair"><div class="field"><label for="recordHemoglobin">Hemoglobin</label><input id="recordHemoglobin" name="hemoglobin" type="number" min="0" step="any" placeholder="Optional"></div><div class="field"><label for="recordHemoglobinUnit">Hemoglobin unit</label><select id="recordHemoglobinUnit" name="hemoglobinUnit"><option>g/dL</option><option>g/L</option></select></div></div><div class="field"><label for="recordCategory">Category stated in report or by care team</label><select id="recordCategory" name="category" required><option value="at-risk">At risk</option><option value="unhealthy">Unhealthy</option><option value="healthy">Healthy</option><option value="good-health">Good health</option></select></div><div class="field"><label for="recordNotes">Report notes (optional)</label><textarea id="recordNotes" name="notes" maxlength="300" placeholder="Optional context from the report"></textarea></div></div><div class="dialog-actions"><button class="button" type="button" data-close="medicalRecordDialog">Cancel</button><button class="button primary" type="submit">Save record</button></div></div></form></dialog>
+  <script>
+    const PEOPLE = ['Mom', 'Dad', 'Brother'];
+    const FAMILY_MEMBERS = [
+      { id: 'grandma', name: 'Grandma', initials: 'G', role: 'Care recipient', x: 50, y: 12 },
+      { id: 'mom', name: 'Mom', initials: 'M', role: 'Caregiver', x: 80, y: 32 },
+      { id: 'dad', name: 'Dad', initials: 'D', role: 'Caregiver', x: 80, y: 68 },
+      { id: 'brother', name: 'Brother', initials: 'B', role: 'Caregiver', x: 50, y: 88 },
+      { id: 'margaret', name: 'YOU', initials: 'Y', role: 'Circle admin', x: 20, y: 50 }
+    ];
+    const HEALTH_CATEGORIES = [
+      { id: 'at-risk', label: 'At risk' },
+      { id: 'unhealthy', label: 'Unhealthy' },
+      { id: 'healthy', label: 'Healthy' },
+      { id: 'good-health', label: 'Good health' }
+    ];
+    const DEFAULT_WELLBEING = {
+      grandma: { hydration: 5, activity: 16, vitalsLogged: false, mood: 'Good' },
+      mom: { hydration: 6, activity: 28, vitalsLogged: true, mood: 'Steady' },
+      dad: { hydration: 4, activity: 32, vitalsLogged: false, mood: 'Tired' },
+      brother: { hydration: 7, activity: 42, vitalsLogged: false, mood: 'Great' },
+      margaret: { hydration: 5, activity: 12, vitalsLogged: false, mood: 'Steady' }
+    };
+    const DEFAULT_WELLBEING_FEED = [
+      { member: 'mom', actor: 'Mom', event: 'Movement check-in logged', time: '9:20 AM', icon: 'spark' },
+      { member: 'grandma', actor: 'Mom', event: 'Hydration check-in logged', time: '9:05 AM', icon: 'check' },
+      { member: 'dad', actor: 'Dad', event: 'Mood check-in shared', time: '8:50 AM', icon: 'heart' },
+      { member: 'brother', actor: 'Brother', event: 'Activity goal updated', time: '8:35 AM', icon: 'clock' },
+      { member: 'margaret', actor: 'You', event: 'Daily check-in shared', time: '8:15 AM', icon: 'users' }
+    ];
+    const STORAGE_KEY = 'carecircle-mvp-v1';
+    const SETTINGS_KEY = 'carecircle-settings-v1';
+    const defaultPreferences = { theme: 'system', reminders: { tasks: true, overdue: true, medications: true, appointments: true } };
+    let preferences;
+    try {
+      const savedPreferences = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+      preferences = { ...defaultPreferences, ...savedPreferences, reminders: { ...defaultPreferences.reminders, ...savedPreferences.reminders } };
+      if (!['light', 'dark', 'system'].includes(preferences.theme)) preferences.theme = 'system';
+    } catch { preferences = structuredClone(defaultPreferences); }
+    const today = new Date();
+    const dateOffset = (days) => { const date = new Date(today); date.setDate(date.getDate() + days); return date; };
+    const isoDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const initialState = {
+      accountName: '',
+      profile: { name: 'Grandma', age: 82, contact: 'Margaret Lee', phone: '(555) 013-8420', allergies: 'Penicillin', notes: 'Prefers tea with breakfast. Keep her reading glasses by the armchair.' },
+      tasks: [
+        { id: 1, title: 'Morning medicine', time: '08:00', assignee: 'Mom', done: true },
+        { id: 2, title: 'Prepare breakfast', time: '08:30', assignee: 'Dad', done: true },
+        { id: 3, title: 'Check blood pressure', time: '10:00', assignee: 'Brother', done: true },
+        { id: 4, title: 'Pick up groceries', time: '12:30', assignee: 'Dad', done: false },
+        { id: 5, title: 'Evening medicine', time: '20:00', assignee: 'Mom', done: false }
+      ],
+      medications: [
+        { id: 1, name: 'Medicine A', dose: 'As prescribed', time: '08:00', taken: true, by: 'Mom' },
+        { id: 2, name: 'Medicine B', dose: 'As prescribed', time: '13:00', taken: false, by: '' },
+        { id: 3, name: 'Medicine C', dose: 'As prescribed', time: '20:00', taken: false, by: '' }
+      ],
+      appointments: [],
+      history: [
+        { time: '8:00 AM', event: 'Morning medicine', person: 'Mom' },
+        { time: '8:30 AM', event: 'Breakfast', person: 'Dad' },
+        { time: '10:00 AM', event: 'Blood pressure checked', person: 'Brother' }
+      ],
+      wellbeing: structuredClone(DEFAULT_WELLBEING),
+      wellbeingFeed: structuredClone(DEFAULT_WELLBEING_FEED),
+      wellbeingLogDates: Object.fromEntries(FAMILY_MEMBERS.map((member) => [member.id, []])),
+      medicalRecords: []
+    };
+    let state;
+    try { state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || structuredClone(initialState); } catch { state = structuredClone(initialState); }
+    const needsAccountSetup = !String(state.accountName || '').trim();
+    state.accountName = String(state.accountName || '').trim() || 'YOU';
+    state.appointments ||= [];
+    state.appointments = state.appointments.filter((appointment) => !(
+      (Number(appointment.id) === 1 && appointment.title === 'Doctor appointment · Dr. Chen' && appointment.time === '10:30') ||
+      (Number(appointment.id) === 2 && appointment.title === 'Lab visit' && appointment.time === '09:00')
+    ));
+    state.wellbeing = { ...structuredClone(DEFAULT_WELLBEING), ...(state.wellbeing || {}) };
+    state.wellbeingFeed ||= structuredClone(DEFAULT_WELLBEING_FEED);
+    state.wellbeingLogDates ||= Object.fromEntries(FAMILY_MEMBERS.map((member) => [member.id, []]));
+    FAMILY_MEMBERS.forEach((member) => {
+      if (!Array.isArray(state.wellbeingLogDates[member.id])) state.wellbeingLogDates[member.id] = [];
+    });
+    state.medicalRecords ||= [];
+    let taskFilter = 'all';
+    let selectedMemberId = 'margaret';
+    const $ = (selector) => document.querySelector(selector);
+    const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+    const formatTime = (time) => { const [hours, minutes] = time.split(':').map(Number); const suffix = hours >= 12 ? 'PM' : 'AM'; return `${hours % 12 || 12}:${String(minutes).padStart(2, '0')} ${suffix}`; };
+    const formatLongDate = (date) => new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(date);
+    const persist = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const toast = (message) => { const element = $('#toast'); element.textContent = message; element.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => element.classList.remove('show'), 2400); };
+    const statusFor = (task) => !task.done && task.time < `${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}` ? 'late' : task.done ? 'done' : 'pending';
+    const icon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+    function renderTasks() {
+      const container = $('#taskList');
+      $('#navTaskCount').textContent = state.tasks.filter((task) => !task.done).length;
+      const orderedTasks = state.tasks.toSorted((a, b) => a.time.localeCompare(b.time));
+      const visibleTasks = orderedTasks.filter((task) => taskFilter === 'all' || (taskFilter === 'open' && !task.done) || (taskFilter === 'done' && task.done) || (taskFilter === 'overdue' && statusFor(task) === 'late'));
+      if (!visibleTasks.length) { container.innerHTML = state.tasks.length ? '<div class="empty-state">No tasks match this filter.</div>' : '<div class="empty-state">Nothing on today\'s list yet. Add a task to get started.</div>'; }
+      else container.innerHTML = visibleTasks.map((task) => {
+        const status = statusFor(task);
+        const label = status === 'done' ? 'Done' : status === 'late' ? 'Overdue' : 'Pending';
+        return `<div class="task-row" data-task-id="${task.id}"><button class="task-check" aria-label="Mark ${escapeHtml(task.title)} ${task.done ? 'pending' : 'complete'}" aria-pressed="${task.done}">${task.done ? icon('check') : ''}</button><div class="task-name ${task.done ? 'is-done' : ''}"><strong>${escapeHtml(task.title)}</strong><small>${formatTime(task.time)}</small></div><select class="assignee-select" aria-label="Reassign ${escapeHtml(task.title)}">${PEOPLE.map((person) => `<option ${task.assignee === person ? 'selected' : ''}>${person}</option>`).join('')}</select><span class="status ${status}">${label}</span></div>`;
+      }).join('');
+      const completed = state.tasks.filter((task) => task.done).length;
+      $('#completedCount').textContent = completed;
+      $('#totalCount').textContent = state.tasks.length;
+      $('#pendingCount').textContent = state.tasks.filter((task) => !task.done && statusFor(task) === 'pending').length;
+      $('#overdueCount').textContent = state.tasks.filter((task) => statusFor(task) === 'late').length;
+      $('#taskSubhead').textContent = formatLongDate(today);
+      renderLoad();
+    }
+    function renderLoad() {
+      const counts = PEOPLE.map((person) => ({ person, count: state.tasks.filter((task) => task.assignee === person).length }));
+      const highest = Math.max(1, ...counts.map(({ count }) => count));
+      $('#loadList').innerHTML = counts.map(({ person, count }) => `<div class="load-row"><span class="load-person">${person}</span><div class="load-track"><div class="load-bar" style="width:${Math.round(count / highest * 100)}%"></div></div><span class="load-number">${count}</span></div>`).join('');
+      const spread = Math.max(...counts.map(({ count }) => count)) - Math.min(...counts.map(({ count }) => count));
+      $('#loadMessage').textContent = spread > 2 ? 'A few tasks could be shared more evenly.' : 'A thoughtful team makes lighter work.';
+    }
+    function renderMedications() {
+      $('#medicationList').innerHTML = state.medications.map((medication) => `<div class="med-row"><span class="med-time">${formatTime(medication.time)}</span><span class="med-pill">${icon('pill')}</span><div class="med-copy"><strong>${escapeHtml(medication.name)}</strong><span>${escapeHtml(medication.dose)}${medication.taken ? ` · Logged by ${escapeHtml(displayAccountName(medication.by))}` : ''}</span></div><button class="med-action ${medication.taken ? 'taken' : ''}" data-med-id="${medication.id}" ${medication.taken ? 'disabled' : ''}>${medication.taken ? '✓ Taken' : 'Log dose'}</button></div>`).join('');
+    }
+    function renderAppointments() {
+      const appointments = state.appointments.toSorted((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
+      $('#appointmentList').innerHTML = appointments.length ? appointments.slice(0, 4).map((appointment) => {
+        const date = new Date(`${appointment.date}T12:00:00`);
+        return `<div class="appointment"><div class="date-tile"><strong>${date.getDate()}</strong><span>${date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}</span></div><div class="appointment-copy"><strong>${escapeHtml(appointment.title)}</strong><span>${formatTime(appointment.time)}</span></div><span class="appointment-who">${escapeHtml(appointment.assignee)}</span></div>`;
+      }).join('') : `<div class="empty-state"><p>No family appointments added yet.</p><button class="button" type="button" id="emptyAppointmentButton">${icon('plus')}Add an appointment</button></div>`;
+      const next = appointments.find((appointment) => appointment.date >= isoDate(today));
+      $('#nextAppointment').textContent = next ? new Date(`${next.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'None planned';
+      const nextMeta = $('#nextAppointment').nextElementSibling;
+      if (next) nextMeta.textContent = `${next.title.split(' · ')[1] || next.assignee} · ${formatTime(next.time)}`;
+      else nextMeta.textContent = 'Add one when ready';
+    }
+    function renderHistory() {
+      $('#historyList').innerHTML = state.history.slice(0, 5).map((entry) => `<div class="history-item"><span class="history-time">${escapeHtml(entry.time)}</span><span class="history-event">${escapeHtml(entry.event)}</span><span class="history-person">${escapeHtml(displayAccountName(entry.person))}</span></div>`).join('') || '<div class="empty-state">Completed care will show up here.</div>';
+    }
+    function familyMemberName(member) {
+      if (member.id === 'grandma') return state.profile.name;
+      if (member.id === 'margaret') return state.accountName;
+      return member.name;
+    }
+    function displayAccountName(name) { return ['Margaret', 'Margaret Lee', 'ML', 'You', 'YOU'].includes(name) ? state.accountName : name; }
+    function accountInitials(name) {
+      const parts = name.trim().split(/\s+/).filter(Boolean);
+      if (!parts.length || name.toUpperCase() === 'YOU') return 'YOU';
+      return parts.length > 1 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : name.slice(0, 2).toUpperCase();
+    }
+    function renderAccount() {
+      const initials = accountInitials(state.accountName);
+      $('#accountButton').textContent = initials;
+      $('#accountButton').title = `Profile: ${state.accountName}`;
+      $('#accountButton').setAttribute('aria-label', `Edit profile for ${state.accountName}`);
+      $('#sidebarUserAvatar').textContent = initials;
+      $('#sidebarUserName').textContent = state.accountName;
+    }
+    function wellbeingStreak(memberId) {
+      const loggedDays = new Set(state.wellbeingLogDates[memberId] || []);
+      const currentDate = new Date();
+      const loggedToday = loggedDays.has(isoDate(currentDate));
+      let cursor = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+      if (!loggedToday) cursor.setDate(cursor.getDate() - 1);
+      let days = 0;
+      while (loggedDays.has(isoDate(cursor))) {
+        days += 1;
+        cursor.setDate(cursor.getDate() - 1);
+      }
+      return { days, loggedToday };
+    }
+    function renderCareTeam() {
+      $('#teamList').innerHTML = FAMILY_MEMBERS.map((member) => `<div class="team-member"><span class="team-avatar">${escapeHtml(member.initials)}</span><span class="team-copy"><strong>${escapeHtml(familyMemberName(member))}</strong><small>${escapeHtml(member.role)}</small></span><span class="team-role">${member.id === 'margaret' ? 'Admin' : member.id === 'grandma' ? 'Recipient' : 'Caregiver'}</span></div>`).join('');
+    }
+    function latestFamilyRecords() {
+      const latest = new Map();
+      state.medicalRecords.toSorted((left, right) => right.date.localeCompare(left.date) || Number(right.id) - Number(left.id)).forEach((record) => {
+        if (!latest.has(record.memberId)) latest.set(record.memberId, record);
+      });
+      return latest;
+    }
+    function formatRecordMeasurements(record) {
+      const measurements = [];
+      if (record.systolic !== null && record.diastolic !== null) measurements.push(`BP ${record.systolic}/${record.diastolic} mmHg`);
+      if (record.glucose !== null) measurements.push(`Glucose ${record.glucose} ${record.glucoseUnit}`);
+      if (record.hemoglobin !== null) measurements.push(`Hemoglobin ${record.hemoglobin} ${record.hemoglobinUnit}`);
+      return measurements.join(' · ') || 'No numerical values';
+    }
+    function renderFamilyHealth() {
+      const latest = latestFamilyRecords();
+      $('#healthStatusGroups').innerHTML = HEALTH_CATEGORIES.map((category) => {
+        const members = FAMILY_MEMBERS.filter((member) => latest.get(member.id)?.category === category.id);
+        const rows = members.map((member) => {
+          const record = latest.get(member.id);
+          const date = new Date(`${record.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          return `<div class="health-record-row"><strong>${escapeHtml(familyMemberName(member))}</strong><small>${escapeHtml(date)} · ${escapeHtml(formatRecordMeasurements(record))}</small></div>`;
+        }).join('') || '<div class="health-empty">No members in this category.</div>';
+        return `<section class="health-group ${category.id}"><div class="health-group-heading"><i class="health-status-dot"></i><strong>${category.label}</strong><span class="health-count">${members.length}</span></div>${rows}</section>`;
+      }).join('');
+      const unrecorded = FAMILY_MEMBERS.filter((member) => !latest.has(member.id));
+      $('#healthUnrecorded').hidden = unrecorded.length === 0;
+      $('#healthUnrecordedList').innerHTML = unrecorded.map((member) => `<span>${escapeHtml(familyMemberName(member))}</span>`).join('');
+    }
+    function renderWellbeing() {
+      const moods = { Great: 96, Good: 82, Steady: 68, Tired: 48, Low: 32 };
+      $('#wellnessNodes').innerHTML = FAMILY_MEMBERS.map((member) => {
+        const checkin = state.wellbeing[member.id] || DEFAULT_WELLBEING[member.id];
+        const hydration = Math.round(Math.min(100, Math.max(0, checkin.hydration / 8 * 100)));
+        const activity = Math.round(Math.min(100, Math.max(0, checkin.activity / 30 * 100)));
+        const vitals = checkin.vitalsLogged ? 100 : 8;
+        const mood = moods[checkin.mood] || moods.Steady;
+        return `<button class="member-node" type="button" data-member-id="${member.id}" aria-pressed="${member.id === selectedMemberId}" aria-label="${escapeHtml(familyMemberName(member))}: ${escapeHtml(checkin.mood)} mood, ${checkin.hydration} glasses of water, ${checkin.activity} minutes activity, vitals ${checkin.vitalsLogged ? 'logged' : 'not logged'}" style="--node-x:${member.x}%;--node-y:${member.y}%;--water:${hydration};--activity:${activity};--vitals:${vitals};--mood:${mood}"><span class="member-ring"><i class="ring-track water"></i><i class="ring-track activity"></i><i class="ring-track vitals"></i><i class="ring-track mood"></i><span class="member-avatar">${escapeHtml(member.initials)}</span></span><span class="member-label">${escapeHtml(familyMemberName(member))}</span><span class="member-mood">${escapeHtml(checkin.mood)}</span></button>`;
+      }).join('');
+      const selectedMember = FAMILY_MEMBERS.find((member) => member.id === selectedMemberId) || FAMILY_MEMBERS[0];
+      const selectedCheckin = state.wellbeing[selectedMember.id] || DEFAULT_WELLBEING[selectedMember.id];
+      const streak = wellbeingStreak(selectedMember.id);
+      const streakMessage = streak.loggedToday ? 'Check-in logged today.' : streak.days ? 'Log today to keep it going.' : 'Log a check-in to start your streak.';
+      $('#memberDetail').innerHTML = `<div class="member-detail-head"><div><strong>${escapeHtml(familyMemberName(selectedMember))}</strong><small>${escapeHtml(selectedMember.role)} · sample check-in</small></div><button class="button member-card-action" type="button" data-log-member="${selectedMember.id}">Log check-in</button></div><div class="member-streak"><span class="streak-symbol">${icon('spark')}</span><span class="streak-copy"><strong>${streak.days} day${streak.days === 1 ? '' : 's'} logging streak</strong><small>${streakMessage}</small></span></div><div class="member-metrics"><div class="member-metric"><small>Hydration</small><strong>${selectedCheckin.hydration} / 8 glasses</strong></div><div class="member-metric"><small>Activity</small><strong>${selectedCheckin.activity} min</strong></div><div class="member-metric"><small>Vitals log</small><strong>${selectedCheckin.vitalsLogged ? 'Logged by family' : 'Not logged'}</strong></div><div class="member-metric"><small>Mood</small><strong>${escapeHtml(selectedCheckin.mood)}</strong></div></div>`;
+      $('#wellbeingFeed').innerHTML = state.wellbeingFeed.slice(0, 6).map((entry) => {
+        const member = FAMILY_MEMBERS.find((item) => item.id === entry.member);
+        const iconName = ['spark', 'check', 'heart', 'clock', 'users', 'pill', 'calendar'].includes(entry.icon) ? entry.icon : 'heart';
+        return `<div class="feed-event"><span class="feed-icon">${icon(iconName)}</span><span class="feed-copy"><strong>${escapeHtml(entry.event)}</strong><small>${escapeHtml(familyMemberName(member || FAMILY_MEMBERS[0]))} · shared by ${escapeHtml(displayAccountName(entry.actor))}</small></span><time class="feed-time">${escapeHtml(entry.time)}</time></div>`;
+      }).join('') || '<div class="empty-state">Family check-ins will appear here.</div>';
+    }
+    function renderAlertHub() {
+      const overdueTasks = preferences.reminders.overdue ? state.tasks.filter((task) => !task.done && statusFor(task) === 'late') : [];
+      const now = `${String(new Date().getHours()).padStart(2, '0')}:${String(new Date().getMinutes()).padStart(2, '0')}`;
+      const missedMedication = preferences.reminders.medications ? state.medications.filter((medication) => !medication.taken && medication.time < now) : [];
+      const urgent = [
+        ...overdueTasks.map((task) => ({ title: `Overdue: ${task.title}`, detail: `Due at ${formatTime(task.time)}` })),
+        ...missedMedication.map((medication) => ({ title: `Medication not logged: ${medication.name}`, detail: `Scheduled for ${formatTime(medication.time)} · check the family's medication record` }))
+      ];
+      const hub = $('#alertHub');
+      hub.classList.toggle('critical', urgent.length > 0);
+      hub.classList.toggle('quiet', urgent.length === 0);
+      $('#alertLabel').textContent = urgent.length ? `${urgent.length} care warning${urgent.length === 1 ? '' : 's'}` : 'Care alerts';
+      $('#alertHeadline').textContent = urgent.length ? 'Items needing attention' : 'No urgent care alerts';
+      $('#alertDetail').textContent = urgent.length ? 'Review each warning below.' : 'Open reminders for upcoming care and family check-ins.';
+      $('#alertStack').innerHTML = urgent.map((item) => `<div class="alert-item"><span class="alert-item-dot" aria-hidden="true"></span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.detail)}</small></span></div>`).join('');
+      $('#alertEmblem').innerHTML = icon(urgent.length ? 'alert' : 'check');
+      $('#alertAction').textContent = urgent.length ? 'Review alerts' : 'Open reminders';
+    }
+    function renderProfile() {
+      const profile = state.profile;
+      $('#emergencyContent').innerHTML = `<div class="contact-block"><span class="contact-icon">${icon('phone')}</span><div><strong>${escapeHtml(profile.contact)}</strong><span>Emergency contact${profile.phone ? ` · ${escapeHtml(profile.phone)}` : ''}</span></div>${profile.phone ? `<a class="call-link" href="tel:${escapeHtml(profile.phone.replace(/[^+\d]/g, ''))}">Call</a>` : ''}</div><div class="info-line"><small>Allergies</small><p>${escapeHtml(profile.allergies || 'None entered')}</p></div><div class="info-line"><small>Care notes & preferences</small><p>${escapeHtml(profile.notes || 'No notes entered')}</p></div>${profile.age ? `<div class="info-line"><small>Profile</small><p>Age ${escapeHtml(profile.age)}</p></div>` : ''}`;
+    }
+    function renderPageHeader(page) {
+      const copy = {
+        today: ['Whole-family health & wellbeing', 'CareCircle', 'Care tasks, medical records, and daily wellbeing for everyone in your circle.'],
+        tasks: ['Daily coordination', 'Care tasks', 'Create, assign, and track your circle\'s care responsibilities.'],
+        schedule: ['Plan the care day', 'Schedule', 'Medication logs and upcoming appointments for the family.'],
+        circle: ['Shared support', 'Family health circle', 'Review every member’s records, wellbeing, and shared care responsibilities.'],
+        settings: ['Your preferences', 'Settings', 'Adjust this device\'s appearance, reminders, and care-data export.']
+      }[page];
+      $('#pageEyebrow').textContent = copy[0];
+      if (page === 'today') {
+        $('#pageTitle').classList.add('logo-heading');
+        $('#pageTitle').innerHTML = '<span class="brand-care">Care</span><span class="brand-circle">Circle</span>';
+      } else {
+        $('#pageTitle').classList.remove('logo-heading');
+        $('#pageTitle').textContent = copy[1];
+      }
+      $('#pageSubtitle').textContent = copy[2];
+      $('#taskPanelHeading').textContent = page === 'tasks' ? 'Care tasks' : 'Today\'s care';
+      $('#appointmentButton').hidden = !['today', 'schedule'].includes(page);
+      $('#addTaskButton').hidden = !['today', 'tasks'].includes(page);
+    }
+    function showPage(page, addHistory = false) {
+      const validPages = ['today', 'tasks', 'schedule', 'circle', 'settings'];
+      if (!validPages.includes(page)) page = 'today';
+      document.body.dataset.page = page;
+      $('#summaryGrid').hidden = page !== 'today';
+      $('#alertHub').hidden = page !== 'today';
+      $('#contentGrid').hidden = page === 'settings';
+      $('#contentGrid').dataset.view = page;
+      $('#settings').hidden = page !== 'settings';
+      document.querySelectorAll('[data-view-link]').forEach((link) => {
+        const active = link.dataset.viewLink === page;
+        link.classList.toggle('active', active);
+        if (active) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+      renderPageHeader(page);
+      if (addHistory) history.pushState({ page }, '', `#view-${page}`);
+      window.scrollTo(0, 0);
+    }
+    function render() {
+      $('#todayDate').textContent = formatLongDate(today);
+      renderAccount(); renderProfile(); renderTasks(); renderMedications(); renderAppointments(); renderHistory(); renderCareTeam(); renderFamilyHealth(); renderWellbeing(); renderAlertHub();
+      renderPageHeader(document.body.dataset.page || 'today');
+    }
+    function persistPreferences() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(preferences)); }
+    function applyTheme(theme) {
+      if (theme === 'system') delete document.documentElement.dataset.theme;
+      else document.documentElement.dataset.theme = theme;
+      const dark = theme === 'dark' || (theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.querySelector('meta[name="theme-color"]').content = dark ? '#1b1c20' : '#f3f5f3';
+    }
+    function renderSettings() {
+      document.querySelectorAll('[data-theme-option]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.themeOption === preferences.theme));
+      });
+      document.querySelectorAll('[data-reminder]').forEach((input) => {
+        input.checked = preferences.reminders[input.dataset.reminder];
+      });
+    }
+    function openWellbeingDialog(memberId) {
+      const member = FAMILY_MEMBERS.find((item) => item.id === memberId);
+      if (!member) return;
+      selectedMemberId = memberId;
+      const checkin = state.wellbeing[memberId] || DEFAULT_WELLBEING[memberId];
+      $('#wellnessDialogTitle').textContent = `Log "${familyMemberName(member)}"'s check-in`;
+      $('#wellnessHydration').value = checkin.hydration;
+      $('#wellnessActivity').value = checkin.activity;
+      $('#wellnessVitals').value = String(checkin.vitalsLogged);
+      $('#wellnessMood').value = checkin.mood;
+      $('#wellnessDialog').showModal();
+    }
+    function openMedicalRecordDialog() {
+      $('#recordMember').innerHTML = FAMILY_MEMBERS.map((member) => `<option value="${member.id}">${escapeHtml(familyMemberName(member))}</option>`).join('');
+      $('#recordDate').value = isoDate(new Date());
+      $('#medicalRecordDialog').showModal();
+    }
+    function fillPeople(select) { select.innerHTML = PEOPLE.map((person) => `<option>${person}</option>`).join(''); }
+    function openProfile() {
+      const form = $('#profileForm');
+      Object.entries(state.profile).forEach(([key, value]) => { if (form.elements[key]) form.elements[key].value = value; });
+      $('#profileDialog').showModal();
+    }
+    function openAccountDialog(setup = false) {
+      $('#accountDialogTitle').textContent = setup ? 'Set up your profile' : 'Your family profile';
+      $('#accountNameInput').value = setup ? '' : state.accountName;
+      $('#accountSaveButton').textContent = setup ? 'Continue' : 'Save name';
+      $('#accountDialog').showModal();
+    }
+    function showNotifications() {
+      const pending = state.tasks.filter((task) => !task.done);
+      const now = `${String(new Date().getHours()).padStart(2, '0')}:${String(new Date().getMinutes()).padStart(2, '0')}`;
+      const overdueTasks = pending.filter((task) => statusFor(task) === 'late');
+      const missedMedication = state.medications.filter((medication) => !medication.taken && medication.time < now);
+      const next = state.appointments.toSorted((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)).find((appointment) => appointment.date >= isoDate(today));
+      const reminders = [
+        ...(preferences.reminders.overdue ? overdueTasks.map((task) => `<div class="info-line urgent-notification"><small>Overdue care task · ${formatTime(task.time)}</small><p>${escapeHtml(task.title)} · due at ${formatTime(task.time)}</p></div>`) : []),
+        ...(preferences.reminders.medications ? missedMedication.map((medication) => `<div class="info-line urgent-notification"><small>Medication not logged · ${formatTime(medication.time)}</small><p>${escapeHtml(medication.name)} · check the family log</p></div>`) : []),
+        ...(preferences.reminders.tasks ? pending.filter((task) => statusFor(task) === 'pending').slice(0, 3).map((task) => `<div class="info-line"><small>Upcoming care task · ${formatTime(task.time)}</small><p>${escapeHtml(task.title)} · due at ${formatTime(task.time)}</p></div>`) : []),
+        ...(preferences.reminders.medications ? state.medications.filter((medication) => !medication.taken && medication.time >= now).slice(0, 2).map((medication) => `<div class="info-line"><small>Medication schedule · ${formatTime(medication.time)}</small><p>${escapeHtml(medication.name)} is waiting to be logged.</p></div>`) : []),
+        ...(preferences.reminders.appointments && next ? [`<div class="info-line"><small>Next appointment · ${new Date(`${next.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</small><p>${escapeHtml(next.title)} · ${escapeHtml(next.assignee)}</p></div>`] : [])
+      ];
+      $('#notificationContent').innerHTML = reminders.join('') || '<p class="subtitle">You are all caught up. No reminders right now.</p>';
+      $('#notificationDialog').showModal();
+      $('.notification-dot').hidden = true;
+    }
+    $('#taskList').addEventListener('click', (event) => {
+      const button = event.target.closest('.task-check');
+      if (!button) return;
+      const task = state.tasks.find((item) => item.id === Number(button.closest('.task-row').dataset.taskId));
+      task.done = !task.done;
+      if (task.done) state.history.unshift({ time: formatTime(new Date().toTimeString().slice(0, 5)), event: task.title, person: task.assignee });
+      persist(); render(); toast(task.done ? `${task.title} marked complete.` : `${task.title} moved back to pending.`);
+    });
+    $('#taskList').addEventListener('change', (event) => {
+      if (!event.target.matches('.assignee-select')) return;
+      const task = state.tasks.find((item) => item.id === Number(event.target.closest('.task-row').dataset.taskId));
+      task.assignee = event.target.value; persist(); render(); toast(`${task.title} reassigned to ${task.assignee}.`);
+    });
+    $('#taskFilters').addEventListener('click', (event) => {
+      const button = event.target.closest('[data-task-filter]');
+      if (!button) return;
+      taskFilter = button.dataset.taskFilter;
+      document.querySelectorAll('[data-task-filter]').forEach((filterButton) => filterButton.setAttribute('aria-pressed', String(filterButton === button)));
+      renderTasks();
+    });
+    $('#wellnessCircle').addEventListener('click', (event) => {
+      const node = event.target.closest('[data-member-id]');
+      if (!node) return;
+      selectedMemberId = node.dataset.memberId;
+      renderWellbeing();
+    });
+    $('#memberDetail').addEventListener('click', (event) => {
+      const button = event.target.closest('[data-log-member]');
+      if (button) openWellbeingDialog(button.dataset.logMember);
+    });
+    $('#alertAction').addEventListener('click', showNotifications);
+    $('#addMedicalRecordButton').addEventListener('click', openMedicalRecordDialog);
+    $('#medicalRecordForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const systolic = data.get('systolic') === '' ? null : Number(data.get('systolic'));
+      const diastolic = data.get('diastolic') === '' ? null : Number(data.get('diastolic'));
+      const glucose = data.get('glucose') === '' ? null : Number(data.get('glucose'));
+      const hemoglobin = data.get('hemoglobin') === '' ? null : Number(data.get('hemoglobin'));
+      const notes = String(data.get('notes') || '').trim();
+      if ((systolic === null) !== (diastolic === null)) { toast('Enter both systolic and diastolic values for blood pressure.'); return; }
+      if (systolic === null && glucose === null && hemoglobin === null && !notes) { toast('Enter at least one measurement or report note.'); return; }
+      const memberId = data.get('memberId');
+      const member = FAMILY_MEMBERS.find((item) => item.id === memberId);
+      if (!member) return;
+      const record = {
+        id: Date.now(), memberId, date: data.get('date'), systolic, diastolic, glucose,
+        glucoseUnit: data.get('glucoseUnit'), hemoglobin, hemoglobinUnit: data.get('hemoglobinUnit'),
+        category: data.get('category'), notes
+      };
+      state.medicalRecords.push(record);
+      const reportDate = new Date(`${record.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const category = HEALTH_CATEGORIES.find((item) => item.id === record.category);
+      state.wellbeingFeed.unshift({ member: memberId, actor: 'YOU', event: `Medical report recorded · ${category.label}`, time: reportDate, icon: 'heart' });
+      state.history.unshift({ time: reportDate, event: `${familyMemberName(member)} medical record added`, person: 'YOU' });
+      persist(); render(); $('#medicalRecordDialog').close(); event.currentTarget.reset(); toast(`${familyMemberName(member)}'s medical record saved.`);
+    });
+    $('#wellnessForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const member = FAMILY_MEMBERS.find((item) => item.id === selectedMemberId);
+      const data = new FormData(event.currentTarget);
+      state.wellbeing[selectedMemberId] = {
+        hydration: Number(data.get('hydration')),
+        activity: Number(data.get('activity')),
+        vitalsLogged: data.get('vitals') === 'true',
+        mood: data.get('mood')
+      };
+      const logDate = isoDate(new Date());
+      const memberLogDates = state.wellbeingLogDates[selectedMemberId] || (state.wellbeingLogDates[selectedMemberId] = []);
+      if (!memberLogDates.includes(logDate)) memberLogDates.push(logDate);
+      const time = formatTime(new Date().toTimeString().slice(0, 5));
+      state.wellbeingFeed.unshift({ member: member.id, actor: 'You', event: 'Family wellbeing check-in shared', time, icon: 'heart' });
+      state.history.unshift({ time, event: `${familyMemberName(member)} wellbeing check-in`, person: 'You' });
+      persist(); render(); $('#wellnessDialog').close(); toast(`${familyMemberName(member)}'s check-in saved.`);
+    });
+    $('#medicationList').addEventListener('click', (event) => {
+      const button = event.target.closest('[data-med-id]');
+      if (!button) return;
+      const medication = state.medications.find((item) => item.id === Number(button.dataset.medId));
+      medication.taken = true; medication.by = 'You';
+      const loggedAt = formatTime(new Date().toTimeString().slice(0, 5));
+      state.history.unshift({ time: loggedAt, event: `${medication.name} logged`, person: 'You' });
+      state.wellbeingFeed.unshift({ member: 'grandma', actor: 'You', event: `Medication logged: ${medication.name}`, time: loggedAt, icon: 'pill' });
+      persist(); render(); toast(`${medication.name} logged as taken.`);
+    });
+    $('#addTaskButton').addEventListener('click', () => $('#taskDialog').showModal());
+    $('#taskLink').addEventListener('click', () => $('#taskDialog').showModal());
+    $('#appointmentButton').addEventListener('click', () => { $('#appointmentDate').value = isoDate(dateOffset(1)); $('#appointmentDialog').showModal(); });
+    $('#appointmentLink').addEventListener('click', () => { $('#appointmentDate').value = isoDate(dateOffset(1)); $('#appointmentDialog').showModal(); });
+    $('#appointmentList').addEventListener('click', (event) => {
+      if (!event.target.closest('#emptyAppointmentButton')) return;
+      $('#appointmentDate').value = isoDate(dateOffset(1));
+      $('#appointmentDialog').showModal();
+    });
+    $('#profileButton').addEventListener('click', openProfile);
+    $('#editProfileLink').addEventListener('click', openProfile);
+    $('#accountButton').addEventListener('click', () => openAccountDialog());
+    $('#accountForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const displayName = String(form.get('displayName') || '').trim().replace(/\s+/g, ' ');
+      if (!displayName) return;
+      state.accountName = displayName;
+      selectedMemberId = 'margaret';
+      persist(); render(); $('#accountDialog').close();
+      toast(`Profile set to ${displayName}.`);
+    });
+    $('#notificationButton').addEventListener('click', showNotifications);
+    $('#settings').addEventListener('click', (event) => {
+      const button = event.target.closest('[data-theme-option]');
+      if (!button) return;
+      preferences.theme = button.dataset.themeOption;
+      persistPreferences(); applyTheme(preferences.theme); renderSettings();
+      toast(`${button.textContent} appearance selected.`);
+    });
+    $('#settings').addEventListener('change', (event) => {
+      if (!event.target.matches('[data-reminder]')) return;
+      preferences.reminders[event.target.dataset.reminder] = event.target.checked;
+      persistPreferences();
+      renderAlertHub();
+      toast('Reminder preferences saved.');
+    });
+    $('#exportDataButton').addEventListener('click', () => {
+      const backup = { exportedAt: new Date().toISOString(), ...state, preferences };
+      const url = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' }));
+      const link = document.createElement('a');
+      link.href = url; link.download = `carecircle-backup-${isoDate(new Date())}.json`; link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+      toast('Care data export started.');
+    });
+    $('#medicationInfo').addEventListener('click', () => toast('Medication entries are family logs, not medical instructions.'));
+    $('#balanceButton').addEventListener('click', () => {
+      const counts = PEOPLE.map((person) => ({ person, count: state.tasks.filter((task) => task.assignee === person && !task.done).length })).sort((a, b) => a.count - b.count);
+      if (!counts[0].count || counts[0].person === counts.at(-1).person) { toast('The remaining tasks are already shared evenly.'); return; }
+      const task = state.tasks.find((item) => item.assignee === counts.at(-1).person && !item.done);
+      task.assignee = counts[0].person; persist(); render(); toast(`${task.title} reassigned to ${counts[0].person}.`);
+    });
+    $('#taskForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      state.tasks.push({ id: Date.now(), title: data.get('title').trim(), time: data.get('time'), assignee: data.get('assignee'), done: false });
+      persist(); render(); event.currentTarget.reset(); $('#taskTime').value = '12:00'; $('#taskDialog').close(); toast('Task added to today\'s care list.');
+    });
+    $('#appointmentForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const appointment = { id: Date.now(), title: data.get('title').trim(), date: data.get('date'), time: data.get('time'), assignee: data.get('assignee') };
+      state.appointments.push(appointment);
+      const appointmentDate = new Date(`${appointment.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      state.wellbeingFeed.unshift({ member: 'grandma', actor: appointment.assignee, event: `Appointment scheduled: ${appointment.title}`, time: appointmentDate, icon: 'calendar' });
+      persist(); render(); event.currentTarget.reset(); $('#appointmentDialog').close(); toast('Appointment added to the family calendar.');
+    });
+    $('#profileForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      state.profile = Object.fromEntries(['name', 'age', 'contact', 'phone', 'allergies', 'notes'].map((key) => [key, String(data.get(key) || '').trim()]));
+      persist(); render(); $('#profileDialog').close(); toast('Care profile updated.');
+    });
+    document.querySelectorAll('[data-close]').forEach((button) => button.addEventListener('click', () => document.getElementById(button.dataset.close).close()));
+    document.querySelectorAll('dialog').forEach((dialog) => dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); }));
+    document.querySelectorAll('[data-view-link]').forEach((link) => link.addEventListener('click', (event) => {
+      event.preventDefault();
+      showPage(link.dataset.viewLink, true);
+    }));
+    const initialPage = location.hash.startsWith('#view-') ? location.hash.slice(6) : 'today';
+    showPage(initialPage);
+    if (!location.hash.startsWith('#view-')) history.replaceState({ page: 'today' }, '', '#view-today');
+    window.addEventListener('popstate', () => showPage(location.hash.startsWith('#view-') ? location.hash.slice(6) : 'today'));
+    fillPeople($('#taskAssignee')); fillPeople($('#appointmentAssignee')); applyTheme(preferences.theme); renderSettings(); render();
+    if (needsAccountSetup) openAccountDialog(true);
+  </script>
+</body>
+</html>
